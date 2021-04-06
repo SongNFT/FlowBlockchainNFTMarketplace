@@ -1,0 +1,31 @@
+{
+	"emulators": {
+		"default": {
+			"port": 3569,
+			"serviceAccount": "emulator-account"
+		}
+	},
+	"contracts": {
+		"PinataPartyContract": "./cadence/contracts/PinataPartyContract.cdc"
+   },
+	"networks": {
+		"emulator": {
+			"host": "127.0.0.1:3569",
+			"chain": "flow-emulator"
+		}
+	},
+	"accounts": {
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"keys": "592a0137146dac530d86ef344f626f7bd242b974e3f8f779ac517de53bc61648",
+			"chain": "flow-emulator",
+			"sigAlgorithm": "ECDSA_P256",
+     		"hashAlgorithm": "SHA3_256"
+		}
+	},
+	"deployments": {
+		"emulator": {
+			 "emulator-account": ["PinataPartyContract"]
+		}
+   }
+}
