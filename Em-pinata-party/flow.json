@@ -6,7 +6,9 @@
 		}
 	},
 	"contracts": {
-		"PinataPartyContract": "./cadence/contracts/PinataPartyContract.cdc"
+		"PinataPartyContract": "./cadence/contracts/PinataPartyContract.cdc",
+		"PinnieToken": "./cadence/contracts/PinnieToken.cdc",
+		"MarketplaceContract": "./cadence/contracts/MarketplaceContract.cdc"
    },
 	"networks": {
 		"emulator": {
@@ -21,11 +23,15 @@
 			"chain": "flow-emulator",
 			"sigAlgorithm": "ECDSA_P256",
      		"hashAlgorithm": "SHA3_256"
+		},
+		"second-account": {
+			"address": "01cf0e2f2f715450",
+			"keys": "b9d4bb1126ff961139785eaee9b101751459615594705b446d37f974032c56e8"
 		}
 	},
 	"deployments": {
 		"emulator": {
-			 "emulator-account": ["PinataPartyContract"]
+			 "emulator-account": ["PinataPartyContract", "PinnieToken", "MarketplaceContract"]
 		}
    }
 }
