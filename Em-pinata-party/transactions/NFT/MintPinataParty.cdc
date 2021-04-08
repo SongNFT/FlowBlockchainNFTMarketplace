@@ -19,6 +19,7 @@ transaction {
           "age": "29", 
           "release date": "06/08/2020", 
           "rating": "rare",
+          "price": "60",
           "uri": "ipfs://QmZC6sSdT51Ci6PxDYec9KkxcZUV5RwXVs7oVruzhtUqXd"
       }
       let newNFT <- self.minterRef.mintNFT()

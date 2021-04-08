@@ -10,6 +10,43 @@ const TokenData = () => {
     checkMarketplace()
   }, []);
 
+  const buyToken = async (tokenId) => {
+    const txId = await fcl
+    .send([
+      fcl.proposer(fcl.authz),
+      fcl.payer(fcl.authz),
+      fcl.authorizations([fcl.authz]),
+      fcl.limit(50),
+      fcl.args([
+        fcl.arg(tokenId, t.UInt64)
+      ]),
+      fcl.transaction`
+        import PinataPartyContract from 0xf8d6e0586b0a20c7
+        import PinnieToken from 0xf8d6e0586b0a20c7
+        import MarketplaceContract from 0xf8d6e0586b0a20c7
+        transaction {
+            let collectionRef: &AnyResource{PinataPartyContract.NFTReceiver}
+            let temporaryVault: @PinnieToken.Vault
+            prepare(acct: AuthAccount) {
+                self.collectionRef = acct.borrow<&AnyResource{PinataPartyContract.NFTReceiver}>(from: /storage/NFTCollection)!
+                let vaultRef = acct.borrow<&PinnieToken.Vault>(from: /storage/MainVault)
+                    ?? panic("Could not borrow owner's vault reference")
+                self.temporaryVault <- vaultRef.withdraw(amount: 10.0)
+            }
+            execute {
+                let seller = getAccount(0xf8d6e0586b0a20c7)
+                let saleRef = seller.getCapability<&AnyResource{MarketplaceContract.SalePublic}>(/public/NFTSale)
+                    .borrow()
+                    ?? panic("Could not borrow seller's sale reference")
+                saleRef.purchase(tokenID: tokenId, recipient: self.collectionRef, buyTokens: <-self.temporaryVault)
+            }
+        }
+      `,      
+    ])
+    await fcl.decode(txId);
+    checkMarketplace();
+  }
+
   const checkMarketplace = async () => {
     try {
       const encoded = await fcl.send([
@@ -57,6 +94,7 @@ const TokenData = () => {
           `, 
           fcl.args([
             fcl.arg(id, t.UInt64)
+            
           ])
         ])
         const decodedPrice = await fcl.decode(encodedPrice)
@@ -88,8 +126,8 @@ const TokenData = () => {
                   <source src={`https://ipfs.io/ipfs/${token.uri.split("://")[1]}`} type="video/mp4" />
                 </video>
                 <h4>Price</h4>
-                <p>{parseInt(token.price, 10).toFixed(2)} Pinnies</p>
-                <button className="btn-primary">Buy Now</button>
+                <p>{parseInt(token.price)} Pinnies</p>
+                <button onClick={() => buyToken(1)} className="btn-primary">Buy Now</button>
               </div>
             </div>
           )
